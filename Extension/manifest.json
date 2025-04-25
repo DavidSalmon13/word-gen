@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "Cover Letter Generator",
+  "version": "1.0",
+  "permissions": [
+    "contextMenus",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost:4567/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Cover Letter Generator"
+  }
+}
+
+
+
+
+/**
+
+{
+  "manifest_version": 3,
+  "name": "Cover Letter Generator",
+  "version": "1.0",
+  "permissions": ["contextMenus", "scripting", "activeTab"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Cover Letter Generator"
+  }
+}
+*/
