@@ -1,96 +1,7 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "SHOW_POPUP") {
-    window.selectedTextFromContext = message.selectedText; // Save the highlighted text
-    document.body.appendChild(popup); // Show the popup
-  }
-});
-
-// Create popup wrapper
-const popup = document.createElement('div');
-popup.className = 'popup';
-popup.style = `
-  display: flex;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  justify-content: center;
-  align-items: center;
-  z-index: 999999;
-`;
-
-// Create popup content
-const content = document.createElement('div');
-content.className = 'popup-content';
-content.style = `
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 400px;
-  text-align: center;
-`;
-
-// Inner HTML with contact fields
-content.innerHTML = `
-  <h2>Enter your description</h2>
-  <textarea id="userDescription" rows="3" cols="40" placeholder="Describe yourself..."></textarea><br><br>
-  <input type="email" id="userEmail" placeholder="Email (optional)" style="width: 90%; padding: 5px;"><br><br>
-  <input type="tel" id="userPhone" placeholder="Phone (optional)" style="width: 90%; padding: 5px;"><br><br>
-  <input type="text" id="userAddress" placeholder="Address (optional)" style="width: 90%; padding: 5px;"><br><br>
-  <input type="name" id="userName" placeholder="Name (optional)" style="width: 90%; padding: 5px;"><br><br>
-
-  <button id="submitBtn">Submit</button>
-  <button id="closeBtn" style="background: red; color: white; padding: 5px 10px; border: none; cursor: pointer;">Close</button>
-`;
-
-// Append content to popup
-popup.appendChild(content);
-
-// Close button functionality
-content.querySelector('#closeBtn').onclick = () => popup.remove();
-
-// Submit button functionality
-content.querySelector('#submitBtn').onclick = () => {
-  const userDescription = document.getElementById('userDescription').value;
-  const email = document.getElementById('userEmail').value;
-  const phone = document.getElementById('userPhone').value;
-  const address = document.getElementById('userAddress').value;
-  const name = document.getElementById('userName').value;
-
-
-  const message = window.selectedTextFromContext || "";
-
-  popup.remove();
-  localStorage.setItem('userDescription', userDescription);
-  localStorage.setItem('userEmail', email);
-  localStorage.setItem('userPhone', phone);
-  localStorage.setItem('userAddress', address);
-  localStorage.setItem('userName', name);
-
-
-
-  fetch(`http://localhost:4567/write?message=${encodeURIComponent(message)}&userDescription=${encodeURIComponent(userDescription)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&address=${encodeURIComponent(address)}&name=${encodeURIComponent(name)}`)
-    .then(res => res.text())
-    .then(data => {
-      alert('Success: ' + data);
-    })
-    .catch(err => {
-      console.error('Fetch error:', err);
-    });
-};
-
-
-
-
-
-//--------------------------------------------------------------------
-/*
-// Listen for message from background.js
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "SHOW_POPUP") {
     window.selectedTextFromContext = message.selectedText;  // Save the highlighted text
-    document.body.appendChild(popup);  // Show the popup
+    showPopupWithSelectedText(message.selectedText);
   }
 });
 
@@ -120,10 +31,14 @@ content.style = `
   text-align: center;
 `;
 
-// Inner HTML
 content.innerHTML = `
-  <h2>Enter your description</h2>
-  <textarea id="userDescription" rows="5" cols="40" placeholder="Describe yourself or the job..."></textarea><br><br>
+  <h2>Enter your details</h2>
+  <textarea id="jobDesc" class="readonly" rows="5" cols="40" placeholder="Job Description..." readonly></textarea><br><br>
+  <textarea id="userDesc" rows="5" cols="40" placeholder="Describe yourself..."></textarea><br><br>
+  <input type="text" id="fullName" placeholder="Full Name"><br><br>
+  <input type="text" id="address" placeholder="Address"><br><br>
+  <input type="email" id="email" placeholder="Email"><br><br>
+  <input type="tel" id="phoneNumber" placeholder="Phone Number"><br><br>
   <button id="submitBtn">Submit</button>
   <button id="closeBtn" style="background: red; color: white; padding: 5px 10px; border: none; cursor: pointer;">Close</button>
 `;
@@ -131,30 +46,43 @@ content.innerHTML = `
 // Append to popup
 popup.appendChild(content);
 
-// Add behavior
+// Functions to open popup with selected text
+function showPopupWithSelectedText(selectedText) {
+  if (popup.parentNode) {
+    popup.remove();
+  }
+  document.body.appendChild(popup);
+  document.getElementById('jobDesc').value = selectedText || "No job description selected.";
+}
+
+// Button behaviors
 content.querySelector('#closeBtn').onclick = () => popup.remove();
 
 content.querySelector('#submitBtn').onclick = () => {
-  // Get the value the user entered
-  const userDescription = document.getElementById('userDescription').value;
-
-  // The selected text is automatically passed as the 'message'
-  const message = window.selectedTextFromContext || "";
-  //********* */
-  /*
+  const jobDesc = document.getElementById('jobDesc').value;
+  const userDesc = document.getElementById('userDesc').value;
+  const fullName = document.getElementById('fullName').value;
+  const address = document.getElementById('address').value;
+  const email = document.getElementById('email').value;
+  const phoneNumber = document.getElementById('phoneNumber').value;
   popup.remove();
-  localStorage.setItem('userDescription', userDescription);
-//************************** */
-  // Send both message and user description to the backend
-  /*
-  fetch(`http://localhost:4567/write?message=${encodeURIComponent(message)}&userDescription=${encodeURIComponent(userDescription)}`)
-    .then(res => res.text())
-    .then(data => {
-      alert('Success: ' + data);
-      popup.remove();
-    })
-    .catch(err => {
-      console.error('Fetch error:', err);
-    });
+  fetch(`http://localhost:4567/write?jobDesc=${encodeURIComponent(jobDesc)}&userDesc=${encodeURIComponent(userDesc)}&fullName=${encodeURIComponent(fullName)}&address=${encodeURIComponent(address)}&email=${encodeURIComponent(email)}&phoneNumber=${encodeURIComponent(phoneNumber)}`)
+      .then(res => res.blob())
+      .then(blob => {
+			
+		  const link = document.createElement('a');
+          const url = URL.createObjectURL(blob);
+          link.href = url;
+          link.download = 'coverLetter.docx'; 
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          alert('Success! File downloaded.');
+          
+      })
+      .catch(err => {
+          console.error('Fetch error:', err);
+      });
 };
-*/
+

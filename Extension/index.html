@@ -33,28 +33,43 @@
             border: none;
             cursor: pointer;
         }
+
+        .readonly {
+            background-color: #eee;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Button to trigger the popup -->
     <button onclick="showPopup()">Write a message</button>
 
-    <!-- The Popup -->
     <div class="popup" id="popup">
         <div class="popup-content">
-            <h2>Enter your description</h2>
-            <textarea id="userDescription" rows="5" cols="40" placeholder="Describe yourself or the job..."></textarea><br><br>
-            <textarea id="userMessage" rows="5" cols="40" placeholder="Write your message..."></textarea><br><br>
+            <h2>Enter your details</h2>
+
+            <!-- Job Description (readonly, prefilled) -->
+            <textarea id="jobDesc" class="readonly" rows="5" cols="40" placeholder="Job Description..." readonly></textarea><br><br>
+
+            <!-- Other inputs -->
+            <textarea id="userDesc" rows="5" cols="40" placeholder="Describe yourself..."></textarea><br><br>
+            <input type="text" id="fullName" placeholder="Full Name"><br><br>
+            <input type="text" id="address" placeholder="Address"><br><br>
+            <input type="email" id="email" placeholder="Email"><br><br>
+            <input type="tel" id="phoneNumber" placeholder="Phone Number"><br><br>
+
             <button onclick="submitForm()">Submit</button>
             <button class="close-btn" onclick="closePopup()">Close</button>
         </div>
     </div>
 
     <script>
+        let selectedText = '';
+
         // Show the popup
         function showPopup() {
             document.getElementById('popup').style.display = 'flex';
+            document.getElementById('jobDesc').value = selectedText || "No job description selected.";
         }
 
         // Close the popup
@@ -64,22 +79,40 @@
 
         // Submit the form data
         function submitForm() {
-            // Get user inputs
-            const userDescription = document.getElementById('userDescription').value;
-            const userMessage = document.getElementById('userMessage').value;
+            const jobDesc = document.getElementById('jobDesc').value;
+            const userDesc = document.getElementById('userDesc').value;
+            const fullName = document.getElementById('fullName').value;
+            const address = document.getElementById('address').value;
+            const email = document.getElementById('email').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
 
-            // Make an AJAX request to the server
-            //fetch(`/write?message=${encodeURIComponent(userMessage)}&userDescription=${encodeURIComponent(userDescription)}`)
-			fetch(`http://localhost:4567/write?message=${encodeURIComponent(userMessage)}&userDescription=${encodeURIComponent(userDescription)}`) 
-			   .then(response => response.text())
-                .then(data => {
-                    alert('Server Response: ' + data); // Handle the server's response
-                    closePopup(); // Close the popup after submission
+            fetch(`http://localhost:4567/write?jobDesc=${encodeURIComponent(jobDesc)}&userDesc=${encodeURIComponent(userDesc)}&fullName=${encodeURIComponent(fullName)}&address=${encodeURIComponent(address)}&email=${encodeURIComponent(email)}&phoneNumber=${encodeURIComponent(phoneNumber)}`)
+                .then(response => response.blob())
+                .then(blob => {
+					closePopup();
+					const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.href = url;
+                    link.download = 'coverLetter.docx';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    
+                    
+					alert('Success! File downloaded.');
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
         }
+
+        // Simulate getting the selected text (in real use, content.js sends this)
+        document.addEventListener('mouseup', function () {
+            selectedText = window.getSelection().toString();
+        });
     </script>
+
 </body>
 </html>
+

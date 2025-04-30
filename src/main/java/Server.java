@@ -1,75 +1,103 @@
 import static spark.Spark.*;
 import org.apache.poi.xwpf.usermodel.*;
+
+import spark.Service.StaticFiles;
+
 import java.io.*;
+
+import static spark.Spark.*;
+import java.io.*;
+import org.apache.poi.xwpf.usermodel.*;
+
 public class Server {
-	static String apiKey = System.getenv("OPENAI_API_KEY");
-	
+    public static void main(String[] args) {
+        String apiKey = System.getenv("OPENAI_API_KEY");
+        GPT chat = new GPT();
+        if (apiKey == null) {
+            System.out.println("API key is not set. Please set the environment variable OPENAI_API_KEY.");
+            System.exit(1);
+        }
 
-	public static void main(String[] args) {
-		
-		if (apiKey == null) {
-		    System.out.println("API key is not set. Please set the environment variable OPENAI_API_KEY.");
-		    System.exit(1);
-		}
-		
-		GPT chat = new GPT();
-		 staticFiles.location("/public"); // looks for resources in src/main/resources/public
+        // Set static file location
+        staticFiles.location("/public");
 
-	        get("/", (req, res) -> {
-	            res.redirect("/index.html");
-	            return null;
-	        });
-	    
-		
-        // Define a GET endpoint: http://localhost:4567/write?message=Hello
-        get("/write", (request, response) -> {
-            System.out.println("🔥 /write endpoint was hit");
-
-        	String jobDesc = request.queryParams("message");
-        	System.out.println("MESSAGEEEE: " + jobDesc);
-        	
-        	String email = request.queryParams("email");
-        	String address = request.queryParams("address");
-        	String phone = request.queryParams("phone");
-        	String name = request.queryParams("name");
-        	System.out.println(name + "  " + phone + "  " + address);
-
-            
-            String userDescription = request.queryParams("userDescription"); // User self-description////////////////////////
-            //userDescription = "";///// not should be!!!!!
-            System.out.println("message: " + jobDesc);
-            System.out.println("userDescription: " + userDescription);
-            
-            String text = chat.sendMessageToChatGPT(apiKey, userDescription,jobDesc, email,address,phone);
-            System.out.println("REached");
-            
-            
-            String path = "C:\\Users\\David\\Downloads\\coverLetter.docx";
-            try (XWPFDocument doc = new XWPFDocument();
-                FileOutputStream out = new FileOutputStream(path)) {
-
-                XWPFParagraph paragraph = doc.createParagraph();
-                XWPFRun run = paragraph.createRun();
-                
-                for (String line : text.split("\n")) {
-                    run.setText(line);
-                    run.addBreak(); // this adds a new line
-                }
-                
-                run.setFontSize(12);
-	            run.setBold(false);
-                
-
-                doc.write(out);
-                System.out.println("✅ Word file written to " + path);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "Error writing to file";
-            }
-
-            return "Word file created with message: " + text;
+        // CORS configuration: Allow requests from LinkedIn
+        before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", "*");
+            response.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            response.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            response.header("Access-Control-Allow-Credentials", "true");
         });
 
-        System.out.println("🚀 Server running at http://localhost:4567/write?message=YourMessage");
+        // Preflight CORS request (for browsers to make OPTIONS requests)
+        options("/*", (request, response) -> {
+            response.status(200);
+            return "OK";
+        });
+
+        // Default route (redirect to index.html)
+        get("/", (req, res) -> {
+            res.redirect("/index.html");
+            return null;
+        });
+
+        // Handle write request
+        get("/write", (request, response) -> {
+            String jobDesc = request.queryParams("jobDesc");
+            String userDesc = request.queryParams("userDesc");
+            String fullName = request.queryParams("fullName");
+            String address = request.queryParams("address");
+            String email = request.queryParams("email");
+            String phoneNumber = request.queryParams("phoneNumber");
+            String message = request.queryParams("message");
+
+            System.out.println("jobDesc: " + jobDesc);
+            System.out.println("userDesc: " + userDesc);
+            System.out.println("fullName: " + fullName);
+            System.out.println("address: " + address);
+            System.out.println("email: " + email);
+            System.out.println("phoneNumber: " + phoneNumber);
+            System.out.println("message: " + message);
+            String text = chat.sendMessageToChatGPT(apiKey, userDesc, jobDesc, email, address, phoneNumber);
+            try (XWPFDocument doc = new XWPFDocument(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                XWPFParagraph paragraph = doc.createParagraph();
+                XWPFRun run = paragraph.createRun();
+
+               
+
+                for (String line : text.split("\n")) {
+                    run.setText(line);
+                    run.addBreak(); 
+                }
+
+                run.setFontSize(12);
+                run.setBold(false);
+
+                doc.write(out);
+                
+                
+               
+
+                byte[] byteArray = out.toByteArray();
+                System.out.println("Generated byte array size: " + byteArray.length);
+
+                response.header("Content-Disposition", "attachment; filename=\"coverLetter.docx\"");
+                response.type("application/msword");  
+
+                response.raw().getOutputStream().write(byteArray);
+                response.raw().getOutputStream().flush();
+                response.raw().getOutputStream().close();
+
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                response.status(500);
+                return "Error creating document.";
+            }
+        });
+
+        System.out.println("Server running at http://localhost:4567/write?jobDesc=YourJobDesc&userDesc=YourUserDesc&fullName=YourFullName&address=YourAddress&email=YourEmail&phoneNumber=YourPhoneNumber&message=YourMessage");
     }
 }
+
+  
