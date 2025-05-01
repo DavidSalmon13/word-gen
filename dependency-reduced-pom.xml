@@ -18,7 +18,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.david.wordgen.Server</mainClass>
+                  <mainClass>Server</mainClass>
                 </transformer>
               </transformers>
             </configuration>
