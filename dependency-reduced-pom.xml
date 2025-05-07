@@ -5,6 +5,7 @@
   <artifactId>word-gen</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <build>
+    <finalName>word-gen</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>

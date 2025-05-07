@@ -26,6 +26,7 @@
   </dependency>
 </dependencies>
 <build>
+  <finalName>word-gen</finalName>  <!-- Set a custom final name -->
   <plugins>
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
