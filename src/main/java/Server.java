@@ -17,8 +17,15 @@ public class Server {
             System.out.println("API key is not set. Please set the environment variable OPENAI_API_KEY.");
             System.exit(1);
         }
-        port(Integer.parseInt(System.getenv("PORT")));
+        System.out.println(apiKey);
+        String port = System.getenv("PORT");
+        if (port == null) {
+            // If PORT is not set, use a default value for local testing
+            port = "4567";  // Default port for local testing
+        }
 
+        int portNumber = Integer.parseInt(port);
+        port(portNumber);
         // Set static file location
         staticFiles.location("/public");
 
