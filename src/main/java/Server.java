@@ -17,7 +17,7 @@ public class Server {
             System.out.println("API key is not set. Please set the environment variable OPENAI_API_KEY.");
             System.exit(1);
         }
-        System.out.println(apiKey);
+        
         String port = System.getenv("PORT");
         if (port == null) {
             // If PORT is not set, use a default value for local testing
@@ -25,9 +25,10 @@ public class Server {
         }
 
         int portNumber = Integer.parseInt(port);
-        port(portNumber);
+        port(portNumber);																									
         // Set static file location
         staticFiles.location("/public");
+
 
         // CORS configuration: Allow requests from LinkedIn
         before((request, response) -> {
