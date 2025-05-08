@@ -28,9 +28,9 @@ public class Server {
         port(portNumber);																									
         // Set static file location
         staticFiles.location("/public");
+        
 
-
-        // CORS configuration: Allow requests from LinkedIn
+        // CORS configuration: Allow requests from LinkedIn.
         before((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
