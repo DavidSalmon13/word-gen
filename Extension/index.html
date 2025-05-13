@@ -86,8 +86,9 @@
             const email = document.getElementById('email').value;
             const phoneNumber = document.getElementById('phoneNumber').value;
 
-            fetch(`http://localhost:4567/write?jobDesc=${encodeURIComponent(jobDesc)}&userDesc=${encodeURIComponent(userDesc)}&fullName=${encodeURIComponent(fullName)}&address=${encodeURIComponent(address)}&email=${encodeURIComponent(email)}&phoneNumber=${encodeURIComponent(phoneNumber)}`)
-                .then(response => response.blob())
+            //fetch(`http://localhost:4567/write?jobDesc=${encodeURIComponent(jobDesc)}&userDesc=${encodeURIComponent(userDesc)}&fullName=${encodeURIComponent(fullName)}&address=${encodeURIComponent(address)}&email=${encodeURIComponent(email)}&phoneNumber=${encodeURIComponent(phoneNumber)}`)
+			fetch(`https://word-gen-1.onrender.com/write?jobDesc=${encodeURIComponent(jobDesc)}&userDesc=${encodeURIComponent(userDesc)}&fullName=${encodeURIComponent(fullName)}&address=${encodeURIComponent(address)}&email=${encodeURIComponent(email)}&phoneNumber=${encodeURIComponent(phoneNumber)}`)  
+				.then(response => response.blob())
                 .then(blob => {
 					closePopup();
 					const link = document.createElement('a');

@@ -66,8 +66,9 @@ content.querySelector('#submitBtn').onclick = () => {
   const email = document.getElementById('email').value;
   const phoneNumber = document.getElementById('phoneNumber').value;
   popup.remove();
-  fetch(`http://localhost:4567/write?jobDesc=${encodeURIComponent(jobDesc)}&userDesc=${encodeURIComponent(userDesc)}&fullName=${encodeURIComponent(fullName)}&address=${encodeURIComponent(address)}&email=${encodeURIComponent(email)}&phoneNumber=${encodeURIComponent(phoneNumber)}`)
-      .then(res => res.blob())
+  //fetch(`http://localhost:4567/write?jobDesc=${encodeURIComponent(jobDesc)}&userDesc=${encodeURIComponent(userDesc)}&fullName=${encodeURIComponent(fullName)}&address=${encodeURIComponent(address)}&email=${encodeURIComponent(email)}&phoneNumber=${encodeURIComponent(phoneNumber)}`)
+  fetch(`https://word-gen-1.onrender.com/write?jobDesc=${encodeURIComponent(jobDesc)}&userDesc=${encodeURIComponent(userDesc)}&fullName=${encodeURIComponent(fullName)}&address=${encodeURIComponent(address)}&email=${encodeURIComponent(email)}&phoneNumber=${encodeURIComponent(phoneNumber)}`)    
+  	  .then(res => res.blob())
       .then(blob => {
 			
 		  const link = document.createElement('a');
