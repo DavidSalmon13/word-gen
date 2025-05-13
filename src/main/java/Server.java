@@ -105,7 +105,6 @@ public class Server {
             }
         });
 
-        System.out.println("Server running at http://localhost:4567/write?jobDesc=YourJobDesc&userDesc=YourUserDesc&fullName=YourFullName&address=YourAddress&email=YourEmail&phoneNumber=YourPhoneNumber&message=YourMessage");
     }
 }
 
