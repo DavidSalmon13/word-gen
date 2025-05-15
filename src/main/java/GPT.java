@@ -11,10 +11,7 @@ import java.time.LocalDate;
 
 public class GPT {
 	static LocalDate today = LocalDate.now();
-	static String context = "Attach the following info(make it apear at the top)- Address: Woodcrest 5429, Philadelphia. email: david.schwartzman@hotmail.com. number: 210-7904790. date : " + today.toString() 
-			+" I am 27, I served one year in the IDF and I played soccer proffesionally in israel until I moved to college at 22. My bachelors is in buisness and administration and my master's is in computer science. "
-			+ "I am the best at Java, I am a lab instructor where I teach Java. I also know python, C# and JavaScript. I have expirience with Postman, SpringBoot and Flutter. The job posting: "; 
-	
+
 	public static String sendMessageToChatGPT(String apiKey, String userMessage, String jobDesc, String email, String address,String phone) throws Exception {
         // Create the HTTP client
 		String forEach = "Write a cover letter based on the information i give you, don't ever do something like [company name][address]etc...!!). Include the following information on top(if not null): " 
@@ -88,24 +85,4 @@ public class GPT {
 	}
 }
 
-/**
-	String cleanedMessage = userMessage.trim().replaceAll("[\\r\\n]+", " ");
 
-	    // Escape special characters
-	    String escapedMessage = escapeSpecialChars(cleanedMessage);
-
-	    // Clean up the context similarly if needed
-	    String escapedContext = escapeSpecialChars(context.trim().replaceAll("[\\r\\n]+", " "));
-
-        HttpClient client = HttpClient.newHttpClient();
-
-        // Construct the message body (JSON) for the API request
-        String jsonBody = "{\n" +
-                "  \"model\": \"gpt-3.5-turbo\",\n" +
-                "  \"messages\": [\n" +
-                "    {\"role\": \"user\", \"content\": \"" +escapedContext+" " +escapedMessage + "\"}\n" +
-                "  ]\n" +
-                "}";
-        System.out.println("Reached");
-*
-*/

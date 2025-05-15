@@ -26,9 +26,9 @@ public class Server {
 
         int portNumber = Integer.parseInt(port);
         port(portNumber);																									
-        // Set static file location
+        /*
         staticFiles.location("/public");
-        
+        */
 
         // CORS configuration: Allow requests from LinkedIn.
         before((request, response) -> {
@@ -44,12 +44,12 @@ public class Server {
             return "OK";
         });
 
-        // Default route (redirect to index.html)
+        /*
         get("/", (req, res) -> {
             res.redirect("/index.html");
             return null;
         });
-
+		*/
         // Handle write request
         get("/write", (request, response) -> {
             String jobDesc = request.queryParams("jobDesc");
