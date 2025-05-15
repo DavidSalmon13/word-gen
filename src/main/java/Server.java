@@ -68,6 +68,8 @@ public class Server {
             System.out.println("phoneNumber: " + phoneNumber);
             System.out.println("message: " + message);
             String text = chat.sendMessageToChatGPT(apiKey, userDesc, jobDesc, email, address, phoneNumber);
+            System.out.println(text);    
+
             try (XWPFDocument doc = new XWPFDocument(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
                 XWPFParagraph paragraph = doc.createParagraph();
                 XWPFRun run = paragraph.createRun();
@@ -105,7 +107,7 @@ public class Server {
             }
         });
 
-    }
+       }
 }
 
   
